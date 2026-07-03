@@ -1,0 +1,60 @@
+\section{An RF-based Method for Graph HPO}
+\label{sec:synthetic-rf}
+
+In this section, we introduce the metalearning Synthetic-RF method, a novel approach for HPO specifically designed for graph learning, building on our previous metalearning works \cite{prochazka_which_2023, dedic_benchmarking_2026}. This section first introduces the Cross-RF method from those previous works, followed by the newly-proposed Synthetic-RF method.
+
+\subsection{The Cross-RF Method}
+
+Suppose we have a \name{graph property descriptor} function \( \delta : \mathrm{D} \to \mathfield{R}^d \) that maps a graph dataset \( \mathcal{D} \) to a vector of numerical properties \( \mathvec{d} \) (e.g., number of nodes, number of edges, average degree, etc.). This function allows us to capture the characteristics of different graph datasets in a structured manner. Suppose we also have a \name{metamodel} \( \mathcal{M}_\rho : \mathfield{R}^d \times \boldsymbol\Lambda \to \mathfield{R} \) that takes as input the properties of a graph dataset \( \delta \left( \mathcal{D} \right) \) (i.e.\ the metafeatures) and a hyperparameter configuration \( \lambda \), and outputs an estimate of a performance metric \( \rho \) (e.g., accuracy, F1-score) of a model \( \hat{f}_\lambda \) trained on \( \mathcal{D} \) with the hyperparameter configuration \( \lambda \). Using this, we can define the Cross-RF and Synthetic-RF hyperparameter tuning methods as follows:
+\begin{equation*}
+	\tau \left( \mathcal{D}, \mathscr{F}, \tilde{\Lambda}, \rho \right) = \argmax_{\lambda \in \tilde{\Lambda}} \mathcal{M}_\rho \left( \delta \left( \mathcal{D} \right), \lambda \right)
+\end{equation*}
+The feasibility of the methods relies on the construction of the metamodel \( \mathcal{M}_\rho \) and on its computational complexity -- namely, the metamodel must be fast enough so that evaluating it on every hyperparameter configuration from \( \tilde{\Lambda} \) at every step of the optimization is not prohibitively costly.
+
+To build the metamodel \( \mathcal{M}_\rho \), we will use an off-the-shelf regression model (in our case, a random forest (RF) regressor, but other regression models could be used as well) trained on a meta-dataset \( \mathcal{H} \).
+The meta-dataset \( \mathcal{H} \) is initialized as \( \mathcal{H} = \emptyset \) and constructed by collecting dataset properties, hyperparameter configurations, and corresponding performance metrics across the progress of the training:
+\begin{equation*}
+	\begin{split}
+		\mathcal{H} = \biggl\{ \left( \delta \left( \mathcal{D}^{(1)} \right), \lambda^{(1)}, \rho( \mathvec{y}_{\mathcal{D}^{(1)}}, \hat{f}_{\lambda^{(1)}} \left( \mathmat{X}_{\mathcal{D}^{(1)}} \right) ) \right), \\
+		\left( \delta \left( \mathcal{D}^{(2)} \right), \lambda^{(2)}, \rho( \mathvec{y}_{\mathcal{D}^{(2)}}, \hat{f}_{\lambda^{(2)}} \left( \mathmat{X}_{\mathcal{D}^{(2)}} \right) ) \right), \dots \biggr\}
+	\end{split}
+\end{equation*}
+An observant reader may have already noticed that when we use this method to optimize hyperparameters for one learning task (and thus only one dataset), the dataset properties \( \delta \left( \mathcal{D}^{(i)} \right) \) will all be identical and thus of no benefit to the metamodel. This describes the RF metalearning method (see \cite{prochazka_which_2023}). In \cite{dedic_benchmarking_2026}, we proposed the Cross-RF method, which uses multiple datasets to populate the meta-dataset \( \mathcal{H} \) and thus allows the metamodel \( \mathcal{M}_\rho \) to learn to generalize across different graph datasets.
+This approach also has serious limitations, as the meta-dataset \( \mathcal{H} \) is constructed from a limited number of datasets, which may not be representative of the diversity of graph datasets encountered in practice. This can lead to poor generalization performance of the metamodel \( \mathcal{M}_\rho \) when applied to new datasets that differ significantly from those seen during training -- essentially, the datasets used in the pretraining might be out-of-distribution for the problem we want to solve.
+
+\subsection{Synthetic-RF: A Synthetic Dataset Generation Approach}
+
+The Synthetic-RF method addresses the limitations of the Cross-RF method by generating synthetic datasets to populate the meta-dataset \( \mathcal{H} \). This approach allows us to create a diverse set of graph datasets that can better represent the variety of real-world graph datasets, thus improving the generalization performance of the metamodel \( \mathcal{M}_\rho \). In general, we would want the meta-dataset to be broad and encompass a wide range of graph properties, so that the metamodel can learn to generalize across different types of graphs. However, due to the limited scope of this preliminary work, we focus on generating synthetic datasets that are similar to the target dataset \( \mathcal{D} \) in terms of their properties. This is a limitation of the current work, but we believe that it is a reasonable starting point for exploring the potential of synthetic dataset generation for graph HPO. In future work, we plan to explore more sophisticated methods for generating synthetic datasets that can better capture the diversity of real-world graph datasets.
+
+In order to generate the synthetic datasets for the pretraining, we use the stochastic block model (SBM) \cite{holland_stochastic_1983}, which is a generative model for random graphs that can produce graphs with community structure. The SBM allows us to control the number of communities, the size of each community, and the probability of edges between nodes within and between communities. By varying these parameters, we can generate a wide range of synthetic graph datasets with different properties.
+
+Concretely, each synthetic dataset is generated so as to mimic the target dataset \( \mathcal{D} \) while introducing controlled variability. We first summarize the target dataset by a vector of five statistics\todo{check notation consistency}
+\begin{equation*}
+	\mathvec{s} = \left( n, \, k, \, \bar{c}, \, h, \, m \right),
+\end{equation*}
+where \( n \) is the number of nodes, \( k \) the number of classes, \( \bar{c} \) the average node degree, \( h \in [0, 1] \) the edge homophily (the fraction of edges connecting nodes of the same class), and \( m \) the number of node features. This vector serves as the baseline around which the synthetic datasets are generated.
+
+To obtain a set of \( n_{\mathcal{D}} \) distinct synthetic datasets rather than a single copy of the target, we perturb \( \mathvec{s} \) independently for each synthetic dataset \( i \in \left\{ 1, \dots, n_{\mathcal{D}} \right\} \) (we omit the dataset index to keep the notation simpler). Every statistic is scaled by an independent multiplicative factor drawn uniformly,
+\begin{equation*}
+	\tilde{s}_j = \mathrm{clip} \left( u_j \, s_j \right), \quad u_j \sim \mathcal{U} \left( 1 - \varepsilon, 1 + \varepsilon \right),
+\end{equation*}
+where \( \varepsilon \) controls the perturbation strength and \( \mathrm{clip} \) restricts each statistic to a sensible range (the node count is kept within prescribed bounds, the number of classes is at least two, and the edge homophily stays strictly between zero and one). This yields a family of such perturbed statistics \( \tilde{\mathvec{s}} = \left( \tilde{n}, \tilde{k}, \tilde{c}, \tilde{h}, \tilde{m} \right) \) whose properties are scattered around those of the target dataset.
+
+The \( \tilde{n} \) nodes are partitioned into \( \tilde{k} \) blocks, one per class, with block sizes \( \mathvec{b} = \left( b_1, \dots, b_{\tilde{k}} \right) \) drawn from a Dirichlet distribution and rescaled so that \( \sum_{c} b_c = \tilde{n} \), yielding slightly unequal community sizes. We denote \( \bar{b} = \tilde{n} / \tilde{k} \) the average block size. The SBM is parametrized by an intra-block edge probability \( p_\text{in} \) (between nodes of the same community) and an inter-block probability \( p_\text{out} \) (between different communities). We choose
+\begin{equation*}
+	p_\text{in} = \frac{\tilde{h} \, \tilde{c}}{\bar{b}}, \qquad p_\text{out} = \frac{\left( 1 - \tilde{h} \right) \tilde{c}}{\tilde{n} - \bar{b}},
+\end{equation*}
+so that the expected node degree matches \( \tilde{c} \) and the expected fraction of within-class (homophilous) edges matches \( \tilde{h} \). The edges are then sampled from the SBM as an undirected graph, and each node is assigned the label of its block.
+
+Finally, a feature matrix \( \mathmat{X} \in \mathfield{R}^{\tilde{n} \times \tilde{m}} \) is generated by drawing each node's feature vector conditionally on its block, so that the features carry class-relevant information analogous to a real attributed graph. The features are sampled as one Gaussian cluster per class placed on the vertices of a hypercube, with the class proportions matching the block sizes \( \mathvec{b} \) and the dimensionality set to \( \tilde{m} \). The feature matrix \( \mathmat{X} \), the sampled graph structure, and the block labels together form a complete synthetic node-classification dataset on which a GNN can be trained to populate the meta-dataset \( \mathcal{H} \).
+
+\subsection{Dataset Property Descriptor}
+
+We characterize each dataset using the same descriptor vector \( \delta \left( \mathcal{D} \right) \) as used in \cite{dedic_benchmarking_2026}, consisting of properties categorized by their relation to the graph \textbf{structure} (topology), node \textbf{attributes}, and the specific \textbf{task} (labels):
+
+\begin{itemize}
+    \item \textbf{General Structural Properties:} These capture the topology independent of labels, including basic statistics (node count, edge count, number of components, average node degree) and global assortativity.
+    \item \textbf{Structure \& Attributes:} We measure the interplay between topology and features via attribute similarity (average cosine similarity across edges).
+    \item \textbf{Structure \& Task (Label Dependencies):} The majority of properties quantify the relationship between the graph topology and node labels. This includes comprehensive homophily measures (edge, node, class, attribute, and adjusted homophily), node label informativeness, and label-dependent connectivity metrics (balanced and adjusted accuracy). We also calculate structural metrics specific to the positive class, such as the average positive node degree, the ratio of positive nodes with degree $>1$ or $>2$, and the relative presence of positive edges.
+    \item \textbf{Attributes \& Task:} To assess how well features separate classes, we compute the average positive attribute similarity and the cross-class similarities (positive-to-negative and negative-to-positive).
+\end{itemize}
