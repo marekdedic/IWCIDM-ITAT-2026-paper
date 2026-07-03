@@ -23,6 +23,7 @@ url=https://www.cs.cas.cz/~martin/,
 
 \begin{abstract}
   Hyperparameter optimization (HPO) for Graph Neural Networks (GNNs) remains computationally expensive, and the Cross-RF meta-learning framework has shown promise in accelerating the search by transferring knowledge from prior runs across datasets. However, two key limitations restrict its practical applicability: the requirement for an existing library of completed HPO runs as pre-training data, and its current role as a one-shot warm-starter rather than an active participant in the optimization loop. This paper studies both limitations. First, we investigate pre-training the Cross-RF metamodel on synthetic graph datasets -- generated via Erdős–Rényi and stochastic block models -- as a substitute for real prior runs, enabling effective cold-start transfer learning without any prior experimentation on real graphs. Second, we propose integrating the Cross-RF metamodel as a surrogate within a Sequential Model-Based Optimization (SMBO) framework, allowing it to guide the acquisition function throughout the optimization rather than only at initialization.
+  \todo{Update}
 \end{abstract}
 
 \begin{keywords}
