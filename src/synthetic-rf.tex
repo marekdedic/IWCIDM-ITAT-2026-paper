@@ -1,9 +1,9 @@
 \section{An RF-based Method for Graph HPO}
-\label{sec:synthetic-rf}
 
 In this section, we introduce the metalearning Synthetic-RF method, a novel approach for HPO specifically designed for graph learning, building on our previous metalearning works \cite{prochazka_which_2023, dedic_benchmarking_2026}. This section first introduces the Cross-RF method from those previous works, followed by the newly-proposed Synthetic-RF method.
 
 \subsection{The Cross-RF Method}
+\label{sec:cross-rf}
 
 Assume access to a \name{graph property descriptor} \( \delta : \mathrm{D} \to \mathfield{R}^d \), which encodes a graph dataset \( \mathcal{D} \) as a vector of numerical characteristics \( \mathvec{d} \) such as its node count, edge count, or average degree, thereby summarizing each dataset in a common, structured form. Assume further a \name{metamodel} \( \mathcal{M}_\rho : \mathfield{R}^d \times \boldsymbol\Lambda \to \mathfield{R} \) that, from a dataset's descriptor \( \delta \left( \mathcal{D} \right) \) (its metafeatures) together with a configuration \( \lambda \), predicts the performance \( \rho \) (e.g.\ accuracy or F1-score) that a model \( \hat{f}_\lambda \) trained on \( \mathcal{D} \) under \( \lambda \) would attain. With these two ingredients, both the Cross-RF and Synthetic-RF tuners are defined as
 \begin{equation*}
@@ -22,6 +22,7 @@ Note that if the method is applied to a single learning task, and hence a single
 This approach also has serious limitations, as the meta-dataset \( \mathcal{H} \) is constructed from a limited number of datasets, which may not be representative of the diversity of graph datasets encountered in practice. This can lead to poor generalization performance of the metamodel \( \mathcal{M}_\rho \) when applied to new datasets that differ significantly from those seen during training -- essentially, the datasets used in the pretraining might be out-of-distribution for the problem we want to solve.
 
 \subsection{Synthetic-RF: A Synthetic Dataset Generation Approach}
+\label{sec:synthetic-rf}
 
 The Synthetic-RF method addresses the limitations of the Cross-RF method by generating synthetic datasets to populate the meta-dataset \( \mathcal{H} \). This approach allows us to create a diverse set of graph datasets that can better represent the variety of real-world graph datasets, thus improving the generalization performance of the metamodel \( \mathcal{M}_\rho \). In general, we would want the meta-dataset to be broad and encompass a wide range of graph properties, so that the metamodel can learn to generalize across different types of graphs. However, due to the limited scope of this preliminary work, we focus on generating synthetic datasets that are similar to the target dataset \( \mathcal{D} \) in terms of their properties. This is a limitation of the current work, but we believe that it is a reasonable starting point for exploring the potential of synthetic dataset generation for graph HPO. In future work, we plan to explore more sophisticated methods for generating synthetic datasets that can better capture the diversity of real-world graph datasets.
 
