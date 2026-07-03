@@ -1,0 +1,9 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+In this work, we build upon our recently introduced Cross-RF method for hyperparameter optimization (HPO) of Graph Neural Networks (GNNs). We introduced Synthetic-RF, a HPO metamodel pretrained on synthetically generated graphs similar to the target graph. We described a stochastic-block-model-based strategy for generating synthetic graphs that closely resemble the target graph, yielding a family of graphs that are similar in structure and properties. We demonstrated that Synthetic-RF can be used to warm-start the HPO process.
+
+Our experimental results are preliminary and limited in scope, but they show that Synthetic-RF outperforms random search on the well-known Cora dataset. However, the margin is very small, and we acknowledge that further experiments are needed to validate the effectiveness of Synthetic-RF across a wider range of datasets.
+
+\subsection{Future Work}
+Given the results obtained, the future work needs to focus on a more comprehensive study of the graph generation process, including the exploration of different graph generation techniques and their impact on the performance of Synthetic-RF, and the study of the properties of the generated graphs.
