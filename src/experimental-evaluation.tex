@@ -5,7 +5,7 @@
 
 We conduct our experiments on the Cora dataset \cite{yang_revisiting_2016}. We compare our proposed Synthetic-RF method agains random search. The methods were both implemented using the Optuna hyperparameter optimization framework \cite{akiba_optuna_2019}.
 
-Each HPO method combination was evaluated independently 5\todo{Re-check} times to account for variability in performance due to random initialization and stochastic training processes. For both methods, we set a patience of 10 -- if no improvement in validation performance was observed for 10 consecutive trials, the optimization process was terminated early.
+Each HPO method combination was evaluated independently 5 times to account for variability in performance due to random initialization and stochastic training processes. For both methods, we set a patience of 10 -- if no improvement in validation performance was observed for 10 consecutive trials, the optimization process was terminated early.
 
 \subsection{Search Spaces}
 
