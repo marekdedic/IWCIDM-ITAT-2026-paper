@@ -3,33 +3,34 @@
 
 \conference{ITAT'26: Information technologies -- Applications and Theory, September 25--29, 2026, Vršatské Podhradie, Slovakia}
 
-\title{Towards Synthetic Data Pretraining for Hyperparameter Optimization}
+\title{Towards Synthetic Data Pretraining for Hyperparameter Optimization in Graph Learning}
 
 \author[1]{Marek Dědič}[%
-orcid=0000-0003-1021-8428,
-email=marek@dedic.eu,
-url=https://dedic.eu/,
+	email=marek@dedic.eu,
+	orcid=0000-0003-1021-8428,
+	url=https://dedic.eu/,
 ]
 \cormark[1]
 \address[1]{Czech Technical University in Prague, Trojanova 13, Prague, Czech Republic}
 
 \author[2]{Martin Holeňa}[%
-email=martin@cs.cas.cz,
-url=https://www.cs.cas.cz/~martin/,
+	email=martin@cs.cas.cz,
+	orcid=0000-0002-2536-9328,
+	url=https://www.cs.cas.cz/~martin/,
 ]
 \address[2]{Czech Academy of Sciences, Pod Vodárenskou věží 271/2, Prague, Czech Republic}
 
 \cortext[1]{Corresponding author.}
 
 \begin{abstract}
-  Hyperparameter optimization (HPO) for Graph Neural Networks (GNNs) remains computationally expensive, and the Cross-RF meta-learning framework has shown promise in accelerating the search by transferring knowledge from prior runs across datasets. However, a key limitation restricts its practical applicability: the requirement for an existing library of completed HPO runs as pre-training data. This work-in-progress paper investigates pre-training the metamodel on synthetic graph datasets -- generated via the stochastic block model -- as a substitute for real prior runs, enabling transfer learning without any prior experimentation on real graphs.
+	Hyperparameter optimization (HPO) for Graph Neural Networks (GNNs) remains computationally expensive, and the Cross-RF meta-learning framework has shown promise in accelerating the search by transferring knowledge from prior runs across datasets. However, a key limitation restricts its practical applicability: the requirement for an existing library of completed HPO runs as pre-training data. This work-in-progress paper investigates pre-training the metamodel on synthetic graph datasets -- generated via the stochastic block model -- as a substitute for real prior runs, enabling transfer learning without any prior experimentation on real graphs.
 \end{abstract}
 
 \begin{keywords}
-  hyperparameter optimization \sep
-  metalearning \sep
-  transfer learning \sep
-  graph neural networks
+	hyperparameter optimization \sep
+	metalearning \sep
+	transfer learning \sep
+	graph neural networks
 \end{keywords}
 
 \maketitle

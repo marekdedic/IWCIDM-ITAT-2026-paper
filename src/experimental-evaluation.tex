@@ -3,7 +3,7 @@
 
 \subsection{Experimental Setup}
 
-We conduct our experiments on the Cora dataset \cite{yang_revisiting_2016}. We compare our proposed Synthetic-RF method agains random search. The methods were both implemented using the Optuna hyperparameter optimization framework \cite{akiba_optuna_2019}.
+We conduct our experiments on the Cora dataset \cite{yang_revisiting_2016}. We compare our proposed Synthetic-RF method against random search. The methods were both implemented using the Optuna hyperparameter optimization framework \cite{akiba_optuna_2019}.
 
 Each HPO method combination was evaluated independently 5 times to account for variability in performance due to random initialization and stochastic training processes. For both methods, we set a patience of 10 -- if no improvement in validation performance was observed for 10 consecutive trials, the optimization process was terminated early.
 
@@ -20,12 +20,12 @@ In our experiments, we used the well-studied and general framework of GraphSAGE 
 	\item \( L_2 \) regularization strength: 0, \( 5 \times 10^{-4} \), \( 5 \times 10^{-3} \)
 	\item Dropout rate: 0, 0.5
 \end{itemize}
-The ranges were chosen based on the prior ar\cite{hamilton_inductive_2017}. All experiments were trained for a maximum of 200 epochs, which was seldomly reached due to the fact that early stopping was employed to prevent overfitting. The early stopping patience was set to 10 epochs.
+The ranges were chosen based on the prior art \cite{hamilton_inductive_2017}. All experiments were trained for a maximum of 200 epochs, which was seldomly reached due to the fact that early stopping was employed to prevent overfitting.
 
 \subsection{Metamodel Architecture}
 
-Fot the metamodel, we used a scikit-learn Random Forest regressor with 100 trees and 30\% of all features considered for each split. Several small implementation details are worth mentioning. First, in each step of the optimisation, all of the already evaluated configurations from \( \mathcal{H} \) are excluded from the set of candidate configurations \( \tilde{\Lambda} \), so that the same configuration is never needlessly re-evaluated. Second, all categorical features are one-hot encoded before being passed to the Random Forest model. Finally, in all our experiments, we used the F1-score as the performance metric \( \rho \) to be optimised.
+Fot the metamodel, we used a scikit-learn Random Forest regressor with 100 trees and 30\% of all features considered for each split. Several small implementation details are worth mentioning. First, in each step of the optimisation, all of the already evaluated configurations from \( \mathcal{A} \) are excluded from the set of candidate configurations \( \tilde{\Lambda} \), so that the same configuration is never needlessly re-evaluated. Second, all categorical features are one-hot encoded before being passed to the Random Forest model. Finally, in all our experiments, we used the F1-score as the performance metric \( \rho \) to be optimised.
 
 \subsection{Results and Analysis}
 
-The preliminary experimental evaluation is limited in nature. Since only one dataset and two methods were evaluated, the results are not sufficient to draw any general conclusions. However, the results do provide some initial insights into the performance of the Synthetic-RF method. On average (accross 5 independent runs), Synthetic-RF achieved a final F1 score of 0.8628, while random search achieved an F1 score of 0.8535. This indicates that Synthetic-RF is able to find better hyperparameter configurations than random search, at least on the Cora dataset. However, the margin of improvement is modest at best, and further experiments on additional datasets and with more HPO methods are needed to validate the effectiveness of the Synthetic-RF method.
+The preliminary experimental evaluation is limited in nature. Since only one dataset and two methods were evaluated, the results are not sufficient to draw any general conclusions. However, the results do provide some initial insights into the performance of the Synthetic-RF method. On average (across 5 independent runs), Synthetic-RF achieved a final F1 score of 0.8628, while random search achieved an F1 score of 0.8535. This indicates that Synthetic-RF is able to find better hyperparameter configurations than random search, at least on the Cora dataset. However, the margin of improvement is modest at best, and further experiments on additional datasets and with more HPO methods are needed to validate the effectiveness of the Synthetic-RF method.
