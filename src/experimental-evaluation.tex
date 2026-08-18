@@ -3,9 +3,9 @@
 
 \subsection{Experimental Setup}
 
-We conduct our experiments on the Cora dataset \cite{yang_revisiting_2016}. We compare our proposed Synthetic-RF method against random search. The methods were both implemented using the Optuna hyperparameter optimization framework \cite{akiba_optuna_2019}.
+We conduct our experiments on the Cora dataset \cite{yang_revisiting_2016}, a citation network with 2 708 nodes, 5 429 edges and 1 433 binary features for each node. The task was inductive node classification. We compare our proposed Synthetic-RF method against random search. The methods were both implemented using the Optuna hyperparameter optimization framework \cite{akiba_optuna_2019}.
 
-Each HPO method combination was evaluated independently 5 times to account for variability in performance due to random initialization and stochastic training processes. For both methods, we set a patience of 10 -- if no improvement in validation performance was observed for 10 consecutive trials, the optimization process was terminated early.
+Each HPO method combination was evaluated independently 5 times to account for variability in performance due to random initialization and stochastic training processes. For both methods, we set a patience of 10 -- if no improvement in validation performance was observed for 10 consecutive trials, the optimization process was stopped early.
 
 \subsection{Search Spaces}
 
@@ -24,7 +24,7 @@ The ranges were chosen based on the prior art \cite{hamilton_inductive_2017}. Al
 
 \subsection{Metamodel Architecture}
 
-Fot the metamodel, we used a scikit-learn Random Forest regressor with 100 trees and 30\% of all features considered for each split. Several small implementation details are worth mentioning. First, in each step of the optimisation, all of the already evaluated configurations from \( \mathcal{A} \) are excluded from the set of candidate configurations \( \tilde{\Lambda} \), so that the same configuration is never needlessly re-evaluated. Second, all categorical features are one-hot encoded before being passed to the Random Forest model. Finally, in all our experiments, we used the F1-score as the performance metric \( \rho \) to be optimised.
+Fot the metamodel, we used a scikit-learn Random Forest regressor with all parameter values taken as defaults from scikit-learn -- most importantly, 100 trees and 30\% of all features considered for each split. Several small implementation details are worth mentioning. First, in each step of the optimisation, all of the already evaluated configurations from \( \mathcal{A} \) are excluded from the set of candidate configurations \( \tilde{\Lambda} \), so that the same configuration is never needlessly re-evaluated. Second, all categorical features are one-hot encoded before being passed to the Random Forest model. Finally, in all our experiments, we used the F1-score as the performance metric \( \rho \) to be optimised.
 
 \subsection{Results and Analysis}
 
