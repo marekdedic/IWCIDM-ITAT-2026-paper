@@ -7,6 +7,12 @@ We conduct our experiments on the Cora dataset \cite{yang_revisiting_2016}, a ci
 
 Each HPO method combination was evaluated independently 5 times to account for variability in performance due to random initialization and stochastic training processes. For both methods, we set a patience of 10 -- if no improvement in validation performance was observed for 10 consecutive trials, the optimization process was stopped early.
 
+\subsection{Synthetic Dataset Generation}
+
+The synthetic datasets used to pretrain the metamodel were generated as described in Section~\ref{sec:synthetic-rf}, taking Cora as the target dataset, so that the baseline statistics were \( \mathvec{s} = \left( 2708, \, 7, \, 3.90, \, 0.81, \, 1433 \right) \). We generated \( n_{\mathcal{D}} = 5 \) synthetic datasets, evaluating 30 hyperparameter configurations on each, which yields a meta-dataset \( \mathcal{A} \) of 150 observations. The configurations were drawn uniformly at random from the search space described below, without replacement, and the same 30 configurations were used for every synthetic dataset, so that the metamodel observes each of them across the whole range of generated dataset properties.
+
+The perturbation strength was set to \( \varepsilon = 0.3 \), that is, each mimicked statistic was scaled by a factor drawn uniformly from \( \left[ 0.7, 1.3 \right] \). The node count was clipped to \( \left[ n_{\min}, n_{\max} \right] = \left[ 1500, 4000 \right] \), a range chosen to bracket Cora's 2 708 nodes, and the number of classes to at most \( k_{\max} = 20 \). The block sizes were drawn from a symmetric Dirichlet distribution with concentration \( \alpha = 5 \), which keeps the communities of comparable but not identical size. Since Cora's feature count is not perturbed, all synthetic datasets have 1 433 node features, matching the target; note, however, that these are real-valued, whereas Cora's are binary bag-of-words indicators.
+
 \subsection{Search Spaces}
 
 In our experiments, we used the well-studied and general framework of GraphSAGE \cite{hamilton_inductive_2017} as the base GNN architecture for node classification tasks. We defined a search space encompassing 8 hyperparameters that are critical to the performance of GraphSAGE models:
